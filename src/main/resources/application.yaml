@@ -1,0 +1,55 @@
+application:
+  monitoring:
+    username: monitoring
+    password: monitoring
+management:
+  endpoint:
+    health:
+      group:
+        readiness:
+          include: readinessState
+        liveness:
+          include: livenessState,ping
+        easyname:
+          include: diskSpace
+          show-details: when-authorized
+      show-details: WHEN_AUTHORIZED
+      roles: ACTUATOR
+      validate-group-membership: false
+  endpoints:
+    enabled-by-default: true
+    web.exposure:
+      exclude: 'shutdown, restart'
+      include: '*'
+  observations:
+    key-values:
+      project: sb32sec
+      application: ${spring.application.name}
+  server:
+    base-path: /
+    port: 18303
+server:
+  port: 8303
+  shutdown: graceful
+spring:
+  aop:
+    auto: true
+    proxy-target-class: true
+  application:
+    name: sb32sec
+  lifecycle:
+    timeout-per-shutdown-phase: 60s
+  main:
+    allow-bean-definition-overriding: true
+    web-application-type: reactive
+  security:
+    user:
+      name: ${spring.application.name}
+      password: password
+    oauth2:
+      resourceserver:
+        jwt:
+          jwk-set-uri: ${KEYCLOAK_AUTH_URL}/realms/realm/protocol/openid-connect/certs
+  threads:
+    virtual:
+      enabled: true
